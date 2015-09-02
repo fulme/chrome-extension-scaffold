@@ -1,0 +1,1 @@
+define(["exports"],function(a){"use strict";define(["exports","module"],function(a,b){var c="foo";b.exports=c})});
