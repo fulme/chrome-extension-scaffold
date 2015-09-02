@@ -1,1 +1,0 @@
-define(["exports","module","./modules/foo","./modules/bar"],function(a,b,c,d){"use strict";var e=function(a){return a&&a.__esModule?a["default"]:a},f=e(c),g=e(d),h=function(){console.log("From module foo >>> ",f),console.log("From module bar >>> ",g)};b.exports=h});
