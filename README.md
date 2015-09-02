@@ -47,18 +47,18 @@
 ```
 
 ### 使用方法
-#### 下载代码
+**下载代码**  
 ```bash
 git clone git@github.com:fulme/chrome-extension-scaffold.git demo
 cd demo
 npm install // 安装依赖
 ```
 
-#### coding & 编译
+**coding & 编译**  
 进入命令行`cd`到demo目录，运行`grunt`命令，然后就是coding了，当sass、es6代码发生变化时，会自动编译并拷贝到相应的目录。
 通过扩展管理页面载入demo/src就可以查看效果了
 
-#### 打包
+**打包**  
 开发完成后，运行`grunt build`命令就会自动编译、压缩、打包成crx文件了。打包之前会先判断pem文件是否存在（判断package.json的`name字段`+`.pem`组成的文件是否存在于根目录），如果存在直接使用，否则自动生成pem文件。**pem是扩展的唯一身份凭证，必须用同一个pem文件打包才能升级，请谨慎保存！**
 
 *PS：此工具主要是方便个人开发使用，也会不断地完善、改进，如果正好也能帮上你，纯属巧合。*
