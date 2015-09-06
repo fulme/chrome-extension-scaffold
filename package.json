@@ -4,6 +4,10 @@
   "description": "chrome extension framework/scaffold",
   "author": "fulme <okfulme@gmail.com> (blog.suluf.com)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fulme/chrome-extension-scaffold.git"
+  },
   "homepage": "https://github.com/fulme/chrome-extension-scaffold",
   "devDependencies": {
     "grunt": "^0.4.5",
