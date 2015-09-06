@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     clean: ['build'],
 
     jshint: {
-      all:['Gruntfile.js','es6/**/*.js', 'js/**/*.js']
+      all: ['Gruntfile.js', 'es6/**/*.js', 'js/**/*.js']
     },
 
     csslint: {
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
     },
 
     imagemin: {
-      dynamic:{
+      dynamic: {
         files: [{
           expand: true,
           cwd: 'src',
@@ -118,7 +118,29 @@ module.exports = function(grunt) {
 
     shell: {
       pem: {
-        command: 'openssl genrsa -out <%= pkg.name %>.pem 2048'
+        command: function() {
+          var name = grunt.file.readJSON('package.json').name;
+          grunt.log.oklns('已自动生成' + name + '.pem，请务必妥善保管！');
+          grunt.log.oklns('pem文件是扩展的唯一凭证，升级扩展的时候必须用相同的pem打包');
+          return 'openssl genrsa -out ' + name + '.pem 2048';
+        }
+      },
+      rebuild: {
+        command: 'grunt build'
+      }
+    },
+
+    replace: {
+      rename: {
+        src: ['package.json'],
+        overwrite: true,
+        replacements: [{
+          from: /\"name\":[\s]*\"([^"]+)\"/,
+          to: function(matchedWord, index, fullText, regexMatches) {
+            var name = process.cwd().replace(/.*[\/]([^/]+)/, '$1');
+            return matchedWord.replace(regexMatches[0], name);
+          }
+        }]
       }
     },
 
@@ -135,10 +157,10 @@ module.exports = function(grunt) {
   grunt.registerTask('build', function() {
     var pem = grunt.file.readJSON('package.json').name + '.pem';
     if (!grunt.file.exists(pem)) {
+      grunt.task.run(['replace']);
       grunt.task.run(['shell']);
-      grunt.log.oklns('已自动生成' + pem + '，请务必妥善保管！');
-      grunt.log.oklns('pem文件是扩展的唯一凭证，升级扩展的时候必须用相同的pem打包');
+    } else {
+      grunt.task.run(['clean', 'csslint', 'jshint', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'crx']);
     }
-    grunt.task.run(['clean', 'csslint', 'jshint', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'crx']);
   });
 };
