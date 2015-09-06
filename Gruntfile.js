@@ -6,6 +6,14 @@ module.exports = function(grunt) {
 
     clean: ['build'],
 
+    jshint: {
+      all:['Gruntfile.js','es6/**/*.js', 'js/**/*.js']
+    },
+
+    csslint: {
+      all: ['styles/**/*.c', 'css/**/*.css']
+    },
+
     uglify: {
       build: {
         files: [{
@@ -24,6 +32,17 @@ module.exports = function(grunt) {
           cwd: 'src/css',
           src: '**/*.css',
           dest: 'build/css'
+        }]
+      }
+    },
+
+    imagemin: {
+      dynamic:{
+        files: [{
+          expand: true,
+          cwd: 'src',
+          src: ['**/*.{png,jpg,gif}'],
+          dest: 'build/'
         }]
       }
     },
@@ -87,13 +106,13 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      scripts:{
+      scripts: {
         files: ['src/es6/**/*.js'],
-        tasks: ['6to5']
+        tasks: ['jshint', '6to5']
       },
-      styles:{
+      styles: {
         files: ['src/styles/**/*.scss'],
-        tasks: ['sass']
+        tasks: ['csslint', 'sass']
       }
     },
 
@@ -114,22 +133,12 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['watch']);
   grunt.registerTask('build', function() {
-    var pem = grunt.file.readJSON('package.json').name +'.pem';
+    var pem = grunt.file.readJSON('package.json').name + '.pem';
     if (!grunt.file.exists(pem)) {
       grunt.task.run(['shell']);
-      grunt.log.oklns('已自动生成'+pem+'，请务必妥善保管！');
+      grunt.log.oklns('已自动生成' + pem + '，请务必妥善保管！');
       grunt.log.oklns('pem文件是扩展的唯一凭证，升级扩展的时候必须用相同的pem打包');
     }
-
-    grunt.task.run([
-        'clean',
-
-        'cssmin',
-        'uglify',
-        'htmlmin',
-
-        'copy',
-        'crx'
-      ]);
+    grunt.task.run(['clean', 'csslint', 'jshint', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'crx']);
   });
 };

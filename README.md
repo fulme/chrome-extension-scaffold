@@ -20,7 +20,7 @@
 - 自动将es6编译成es5
 - 统一通过amd方式组织popup、background、CS等运行环境的js代码
 - 分别压缩、混淆popup、background、CS等运行环境的代码
-- js、css、html压缩
+- js、css、img、html压缩
 - 自动生成pem文件并打包成crx
 
 ### 代码组织结构
