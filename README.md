@@ -10,10 +10,24 @@
 
 **CS代码加载机制与页面不同**  
 页面可以通过创建`script`标签动态加载代码（requirejs、sea.js等框架就是这么做的），但`CS`是在一个隔离的环境不能通过创建`script`标签加载，所以amd、cmd、umd之类的框架一下就全部阵亡了。这里通过重写requirejs的load方法勉强支持了`amd`方式加载CS代码。
-
 之所以说勉强是因为这样做是有损且不优雅的，这样做有两个问题：  
 1. 都是通过`eval`方式注入的代码，不方便调试了，在开发者工具中看不到动态加载的js代码了  
 2. 需要在manifest.json文件的`web_accessible_resources`字段挨个逻辑需要加载的脚本
+
+CS代码的注入还有另外一种方案（更优雅）：
+```js
+// 注入JS代码
+chrome.tabs.executeScript(tabId, {
+  file: 'path/file',
+  allFrames: true|false
+  runAt: 'document_start|document_end|document_idle'
+});
+// 注入CSS代码 参数同上
+chrome.tabs.insertCSS(...);
+```
+这样一来就不存在上述两个问题了，唯一需要做的是在一个合适的时机通过上述接口注入相关代码即可。
+[chrome.tabs.executeScript](https://developer.chrome.com/extensions/tabs#method-executeScript)和[chrome.tabs.insertCSS](https://developer.chrome.com/extensions/tabs#method-insertCSS)
+
 
 ### 支持的功能
 - 自动将sass编译成css
