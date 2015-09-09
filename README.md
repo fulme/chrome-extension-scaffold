@@ -14,21 +14,6 @@
 1. 都是通过`eval`方式注入的代码，不方便调试了，在开发者工具中看不到动态加载的js代码了  
 2. 需要在manifest.json文件的`web_accessible_resources`字段挨个逻辑需要加载的脚本
 
-CS代码的注入还有另外一种方案（更优雅）：
-```js
-// 注入JS代码
-chrome.tabs.executeScript(tabId, {
-  file: 'path/file',
-  allFrames: true|false
-  runAt: 'document_start|document_end|document_idle'
-});
-// 注入CSS代码 参数同上
-chrome.tabs.insertCSS(...);
-```
-这样一来就不存在上述两个问题了，唯一需要做的是在一个合适的时机通过上述接口注入相关代码即可。
-[chrome.tabs.executeScript](https://developer.chrome.com/extensions/tabs#method-executeScript)和[chrome.tabs.insertCSS](https://developer.chrome.com/extensions/tabs#method-insertCSS)
-
-
 ### 支持的功能
 - 自动将sass编译成css
 - 自动将es6编译成es5
