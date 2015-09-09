@@ -11,7 +11,7 @@ module.exports = function(grunt) {
     },
 
     csslint: {
-      all: ['styles/**/*.c', 'css/**/*.css']
+      all: ['sass/**/*.c', 'less/**/*.c', 'css/**/*.css']
     },
 
     uglify: {
@@ -73,8 +73,27 @@ module.exports = function(grunt) {
       build: {
         files: [{
           expand: true,
-          cwd: 'src/styles',
+          cwd: 'src/sass',
           src: '**/*.scss',
+          dest: 'src/css',
+          ext: '.css'
+        }]
+      }
+    },
+
+    less: {
+      options: {
+        plugins: [
+          new(require('less-plugin-clean-css'))({
+            advanced: true
+          })
+        ]
+      },
+      build: {
+        files: [{
+          expand: true,
+          cwd: 'src/less',
+          src: '**/*.less',
           dest: 'src/css',
           ext: '.css'
         }]
@@ -100,7 +119,7 @@ module.exports = function(grunt) {
       main: {
         expand: true,
         cwd: 'src',
-        src: ['./**/*', '!./es6/**', '!./js/**', '!./styles/**', '!./css/**', '!./*.html'],
+        src: ['./**/*', '!./es6/**', '!./js/**', '!./sass/**', '!./less/**', '!./css/**', '!./*.html'],
         dest: 'build'
       }
     },
@@ -110,9 +129,13 @@ module.exports = function(grunt) {
         files: ['src/es6/**/*.js'],
         tasks: ['jshint', '6to5']
       },
-      styles: {
-        files: ['src/styles/**/*.scss'],
+      sass: {
+        files: ['src/sass/**/*.scss'],
         tasks: ['csslint', 'sass']
+      },
+      less: {
+        files: ['src/less/**/*.less'],
+        tasks: ['csslint', 'less']
       }
     },
 
@@ -160,7 +183,7 @@ module.exports = function(grunt) {
       grunt.task.run(['replace']);
       grunt.task.run(['shell']);
     } else {
-      grunt.task.run(['clean', 'csslint', 'jshint', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'crx']);
+      grunt.task.run(['clean', 'sass', 'less', 'csslint', 'jshint', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'crx']);
     }
   });
 };

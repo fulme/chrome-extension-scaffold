@@ -27,12 +27,13 @@
 ```html
 .
 ├── _locales  用于支持国际化的字符串变量
-├── css       css资源，包括styles目录编译后的css文件
+├── css       css资源，包括sass、less目录编译后的css文件
 ├── es6       es6源代码目录，此目录下得代码会自动编译成es5代码并拷贝到js目录
 ├── img       图片资源
 ├── js        js源码，包括es6目录代码编译后的代码
 ├── lib       公共库文件，包括js、css、img等资源
-├── styles    sass源码，会自动编译并拷贝到css目录
+├── scss      sass源码，会自动编译并拷贝到css目录
+├── less      less源码，会自动编译并拷贝到css目录
 ├─
 ├── bg.html       background页面
 ├── pop.html      popup页面
