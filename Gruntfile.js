@@ -11,17 +11,84 @@ module.exports = function(grunt) {
     },
 
     csslint: {
-      all: ['sass/**/*.c', 'less/**/*.c', 'css/**/*.css']
+      all: ['sass/**/*.css', 'css/**/*.css']
     },
 
-    uglify: {
+    sass: {
+      build: {
+        options: {
+          sourcemap: 'none'
+        },
+        files: [{
+          expand: true,
+          cwd: 'src/sass',
+          src: '**/*.css',
+          dest: 'src/css',
+          ext: '.css'
+        }]
+      }
+    },
+
+    less: {
+      build: {
+        options: {
+          sourcemap: 'none'
+        },
+        files: [{
+          expand: true,
+          cwd: 'src/less',
+          src: '**/*.less',
+          dest: 'src/css',
+          ext: '.css'
+        }]
+      }
+    },
+
+    '6to5': {
+      options: {
+        modules: 'amd'
+      },
+
       build: {
         files: [{
           expand: true,
-          cwd: 'src/js',
-          src: '**/*.js',
-          dest: 'build/js'
-        }]
+          cwd: 'src/es6',
+          src: ['**/*.js'],
+          dest: 'src/js',
+        }],
+      }
+    },
+
+    watch: {
+      scripts: {
+        files: ['src/es6/**/*.js'],
+        tasks: ['jshint', '6to5']
+      },
+      sass: {
+        files: ['src/sass/**/*.css'],
+        tasks: ['csslint', 'sass']
+      },
+      less: {
+        files: ['src/less/**/*.css'],
+        tasks: ['csslint', 'less']
+      }
+    },
+
+    uglify: {
+      content: {
+        files: {
+          'build/content.js': ['src/content.js', 'src/js/content.js']
+        }
+      },
+      bg: {
+        files: {
+          'build/bg.js': ['src/bg.js', 'src/js/bg.js']
+        }
+      },
+      pop: {
+        files: {
+          'build/pop.js': ['src/pop.js', 'src/js/pop.js']
+        }
       }
     },
 
@@ -52,10 +119,11 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'src',
-          src: './*.html',
+          src: '*.html',
           dest: 'build/',
           ext: '.html',
           options: {
+            maxLineLength: 1,
             removeComments: true,
             removeCommentsFromCDATA: true,
             removeCDATASectionsFromCDATA: true,
@@ -69,49 +137,30 @@ module.exports = function(grunt) {
       }
     },
 
-    sass: {
-      build: {
-        files: [{
-          expand: true,
-          cwd: 'src/sass',
-          src: '**/*.scss',
-          dest: 'src/css',
-          ext: '.css'
-        }]
-      }
-    },
-
-    less: {
-      options: {
-        plugins: [
-          new(require('less-plugin-clean-css'))({
-            advanced: true
-          })
-        ]
+    requirejs: {
+      content: {
+        options: {
+          baseUrl: 'src',
+          mainConfigFile:'src/content.js',
+          include: ['js/content.js'],
+          out: 'src/js/content.js'
+        }
       },
-      build: {
-        files: [{
-          expand: true,
-          cwd: 'src/less',
-          src: '**/*.less',
-          dest: 'src/css',
-          ext: '.css'
-        }]
-      }
-    },
-
-    '6to5': {
-      options: {
-        modules: 'amd'
+      bg: {
+        options: {
+          baseUrl: 'src',
+          mainConfigFile:'src/bg.js',
+          include: ['js/bg.js'],
+          out: 'src/js/bg.js'
+        }
       },
-
-      build: {
-        files: [{
-          expand: true,
-          cwd: 'src/es6',
-          src: ['**/*.js'],
-          dest: 'src/js',
-        }],
+      pop: {
+        options: {
+          baseUrl: 'src',
+          mainConfigFile:'src/pop.js',
+          include: ['js/pop.js'],
+          out: 'src/js/pop.js'
+        }
       }
     },
 
@@ -119,23 +168,8 @@ module.exports = function(grunt) {
       main: {
         expand: true,
         cwd: 'src',
-        src: ['./**/*', '!./es6/**', '!./js/**', '!./sass/**', '!./less/**', '!./css/**', '!./*.html'],
+        src: ['./**/*', '!./es6/**', '!./js/**', '!./sass/**', '!./less/**', '!./css/**', '!./img/**', '!./*.js', '!./*.html', '!./lib/require-cs.js'],
         dest: 'build'
-      }
-    },
-
-    watch: {
-      scripts: {
-        files: ['src/es6/**/*.js'],
-        tasks: ['jshint', '6to5']
-      },
-      sass: {
-        files: ['src/sass/**/*.scss'],
-        tasks: ['csslint', 'sass']
-      },
-      less: {
-        files: ['src/less/**/*.less'],
-        tasks: ['csslint', 'less']
       }
     },
 
@@ -164,6 +198,20 @@ module.exports = function(grunt) {
             return matchedWord.replace(regexMatches[0], name);
           }
         }]
+      },
+      manifest: {
+        src: ['build/manifest.json'],
+        overwrite: true,
+        replacements: [{
+          from: /\"lib\/require-cs\.js\"[\s]*(,)?/,
+          to: ''
+        }, {
+          from: /\"js\/(.+\/)?.+\.js\"[\s]*(,)?(\n)?/g,
+          to: ''
+        }, {
+          from: /(,)\n[\s\t]*\]/g,
+          to: ']'
+        }]
       }
     },
 
@@ -180,10 +228,10 @@ module.exports = function(grunt) {
   grunt.registerTask('build', function() {
     var pem = grunt.file.readJSON('package.json').name + '.pem';
     if (!grunt.file.exists(pem)) {
-      grunt.task.run(['replace']);
+      grunt.task.run(['replace:rename']);
       grunt.task.run(['shell']);
     } else {
-      grunt.task.run(['clean', 'sass', 'less', 'csslint', 'jshint', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'crx']);
+      grunt.task.run(['clean', 'csslint', 'jshint', '6to5', 'requirejs', 'uglify', 'cssmin', 'imagemin', 'htmlmin', 'copy', 'replace:manifest', 'crx']);
     }
   });
 };

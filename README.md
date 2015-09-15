@@ -10,16 +10,17 @@
 
 **CS代码加载机制与页面不同**  
 页面可以通过创建`script`标签动态加载代码（requirejs、sea.js等框架就是这么做的），但`CS`是在一个隔离的环境不能通过创建`script`标签加载，所以amd、cmd、umd之类的框架一下就全部阵亡了。这里通过重写requirejs的load方法勉强支持了`amd`方式加载CS代码。
-之所以说勉强是因为这样做是有损且不优雅的，这样做有两个问题：  
-1. 都是通过`eval`方式注入的代码，不方便调试了，在开发者工具中看不到动态加载的js代码了  
-2. 需要在manifest.json文件的`web_accessible_resources`字段挨个逻辑需要加载的脚本
+之所以说勉强是因为这样做是有损且不优雅的，这样做在开发阶段有两个问题：  
+1. 都是通过`eval`方式注入的代码，不方便调试了，在开发者工具中看不到动态加载的js代码了(可以通过debugger命令下断点)  
+2. 需要在manifest.json文件的`web_accessible_resources`字段挨个逻辑需要加载的脚本  
+*PS：打包的时候会自动压缩合并AMD代码，删除web_accessible_resources对应的文件列表*
 
 ### 支持的功能
 - 自动将sass编译成css
 - 自动将es6编译成es5
 - 统一通过amd方式组织popup、background、CS等运行环境的js代码
 - 分别压缩、混淆popup、background、CS等运行环境的代码
-- js、css、img、html压缩
+- js、css、img、html压缩、合并
 - 自动生成pem文件并打包成crx
 
 ### 代码组织结构

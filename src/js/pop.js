@@ -1,16 +1,1 @@
-define(["exports", "module", "./modules/foo", "./modules/bar"], function (exports, module, _modulesFoo, _modulesBar) {
-  "use strict";
-
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-  var foo = _interopRequire(_modulesFoo);
-
-  var bar = _interopRequire(_modulesBar);
-
-  var init = function () {
-    console.log("From module foo >>> ", foo);
-    console.log("From module bar >>> ", bar);
-  };
-
-  module.exports = init;
-});
+define("js/modules/foo",["exports","module"],function(e,t){"use strict";var n="foo";t.exports=n}),define("js/modules/bar",["exports","module"],function(e,t){"use strict";var n="foo",r="zoo";t.exports=n}),define("js/pop.js",["exports","module","./modules/foo","./modules/bar"],function(e,t,n,r){"use strict";var i=function(e){return e&&e.__esModule?e["default"]:e},s=i(n),o=i(r),u=function(){console.log("From module foo >>> ",s),console.log("From module bar >>> ",o)};t.exports=u});
